@@ -31,21 +31,19 @@ def print_board(board, player):
         print(board)
         board.apply_transform(chess.flip_vertical)
     
-def get_move(board):
+def move(board):
     move = str()
-    legal = False
-    while (not legal):
-        print(board.legal_moves)
+    valid_move = False
+    while (not valid_move):
         print('Move : ', end='')
         move = input()
-        move = chess.Move.from_uci(move)
-        if (move in board.legal_moves):
-            print('legal')
-            legal = True
-        else:
-            print('not legal')
-            legal = False
-    return move
+        try:
+            board.push_san(move)
+            valid_move = True
+        except chess.InvalidMoveError:
+            print('The move you entered is not a valid move in Short Algebraic Notaion (SAN)')
+        except chess.IllegalMoveError:
+            print('The move you entered it not legal in the current state of the game')
 
 if __name__ == '__main__':
     load_games()
@@ -59,7 +57,12 @@ if __name__ == '__main__':
     # Create a new board
     board = chess.Board()
 
+    turn_counter = 0
     while (True):
+        if (turn_counter % 2 == 0):
+            print('==WHITE\'S TURN==')
+        else:
+            print('==BLACK\'S TURN==')
         print_board(board, player_piece)
-        move = get_move(board)
-        board.push(move)
+        move(board)
+        turn_counter += 1
