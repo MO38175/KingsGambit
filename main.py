@@ -1,37 +1,53 @@
 import chess
-import chess.svg
 
 DATAFILE = 'games.csv'
 
 column_reference = {}
 chess_games = []
+winners = []
+current_states = []
 
-# Load the moves of each game into the list "chess_games"
-def load_games():
-    with open(DATAFILE, 'r') as f:
-        lines = f.readlines()
-        for i in range(len(lines)):
-            if (i == 0):
-                columns = lines[i].split(',')
-                for j in range(len(columns)):
-                    column_reference[columns[j].strip()] = j
-                pass
-            else:
-                chess_games.append(lines[i].split(',')[column_reference['moves']].split(' '))
-    return
+# Load in the data
+with open(DATAFILE, 'r') as f:
+    lines = f.readlines()
+    for i in range(len(lines)):
+        if (i == 0):
+            columns = lines[i].split(',')
+            for j in range(len(columns)):
+                column_reference[columns[j].strip()] = j
+            pass
+        else:
+            chess_games.append(lines[i].split(',')[column_reference['moves']].split(' '))
+            winners.append(lines[i].split(',')[column_reference['winner']])
 
-# Print the board safely
-def print_board(board, player):
-    # White player case
+# Engine init
+current_states = chess_games
+player = 0
+while ((player != 1) and (player != 2)):
+    print('What piece are you?\n1. White\n2. Black')
+    player = int(input())
+board = chess.Board()
+
+# Engine loop
+turn_counter = 0
+while (True):
+    print(len(current_states))
+
+    # Say whos turn it is
+    if (turn_counter % 2 == 0):
+        print('==WHITE\'S TURN==')
+    else:
+        print('==BLACK\'S TURN==')
+
+    # Print the board
     if (player == 1):
         print(board)
-    # Black player case
     else:
         board.apply_transform(chess.flip_vertical)
         print(board)
         board.apply_transform(chess.flip_vertical)
-    
-def move(board):
+
+    # Get a legal move
     move = str()
     valid_move = False
     while (not valid_move):
@@ -45,24 +61,14 @@ def move(board):
         except chess.IllegalMoveError:
             print('The move you entered it not legal in the current state of the game')
 
-if __name__ == '__main__':
-    load_games()
-    
-    # Is the player black or white?
-    player_piece = 0
-    while ((player_piece != 1) and (player_piece != 2)):
-        print('What piece are you?\n1. White\n2. Black')
-        player_piece = int(input())
+    # Update the list of possible states
+    new_states = []
+    for i in range(len(current_states)):
+        if current_states[i][0] == move:
+            trimmed_state = current_states[i][1:]
+            if len(trimmed_state) != 0:
+                new_states.append(trimmed_state)
+    current_states = new_states
 
-    # Create a new board
-    board = chess.Board()
-
-    turn_counter = 0
-    while (True):
-        if (turn_counter % 2 == 0):
-            print('==WHITE\'S TURN==')
-        else:
-            print('==BLACK\'S TURN==')
-        print_board(board, player_piece)
-        move(board)
-        turn_counter += 1
+    # Increment the turn counter
+    turn_counter += 1
