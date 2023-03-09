@@ -1,4 +1,5 @@
 import chess
+from collections import Counter
 
 DATAFILE = 'games.csv'
 
@@ -31,7 +32,6 @@ board = chess.Board()
 # Engine loop
 turn_counter = 0
 while (True):
-    print(len(current_states))
 
     # Say whos turn it is
     if (turn_counter % 2 == 0):
@@ -69,6 +69,14 @@ while (True):
             if len(trimmed_state) != 0:
                 new_states.append(trimmed_state)
     current_states = new_states
+
+    # Show the top 5 moves to come next
+    next_moves = []
+    for i in range(len(current_states)):
+        next_moves.append(current_states[i][0])
+    counted = Counter(next_moves)
+    top_five = counted.most_common(5)
+    print(top_five)
 
     # Increment the turn counter
     turn_counter += 1
