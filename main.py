@@ -18,11 +18,9 @@ with open(DATAFILE, 'r') as f:
                 column_reference[columns[j].strip()] = j
             pass
         else:
-            chess_games.append(lines[i].split(',')[column_reference['moves']].split(' '))
-            winners.append(lines[i].split(',')[column_reference['winner']])
+            current_states.append(((lines[i].split(',')[column_reference['winner']]), lines[i].split(',')[column_reference['moves']].split(' ')))
 
 # Engine init
-current_states = chess_games
 player = 0
 while ((player != 1) and (player != 2)):
     print('What piece are you?\n1. White\n2. Black')
@@ -64,19 +62,47 @@ while (True):
     # Update the list of possible states
     new_states = []
     for i in range(len(current_states)):
-        if current_states[i][0] == move:
-            trimmed_state = current_states[i][1:]
+        if current_states[i][1][0] == move:
+            trimmed_state = current_states[i][1][1:]
             if len(trimmed_state) != 0:
-                new_states.append(trimmed_state)
+                new_states.append((current_states[i][0], trimmed_state))
     current_states = new_states
+
+    # new_states = []
+    # for i in range(len(current_states)):
+    #     if current_states[i][0] == move:
+    #         trimmed_state = current_states[i][1:]
+    #         if len(trimmed_state) != 0:
+    #             new_states.append(trimmed_state)
+    # current_states = new_states
 
     # Show the top 5 moves to come next
     next_moves = []
     for i in range(len(current_states)):
-        next_moves.append(current_states[i][0])
+        # On white's turn we want to predict the turns black wants to make
+        if (turn_counter % 2) == 0:
+            if current_states[i][0] == 'black':
+                next_moves.append(current_states[i][1][0])
+        # Vice verse for black's turn
+        else:
+            if current_states[i][0] == 'white':
+                next_moves.append(current_states[i][1][0])
     counted = Counter(next_moves)
     top_five = counted.most_common(5)
-    print(top_five)
+    total_elements = len(current_states)
+    if (player == 1):
+        if (turn_counter % 2) == 0:
+            print('Moves Black is likely to play')
+        else:
+            print('Moves you could play')
+    else:
+        if (turn_counter % 2) == 1:
+            print('Moves White is likely to play')
+        else:
+            print('Moves you could play')
+    for element, count in top_five:
+        percentage = (count / total_elements) * 100
+        print(f"{element}: {percentage:.2f}%")
 
     # Increment the turn counter
     turn_counter += 1
