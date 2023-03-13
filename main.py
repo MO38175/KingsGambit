@@ -16,7 +16,6 @@ with open(DATAFILE, 'r') as f:
             columns = lines[i].split(',')
             for j in range(len(columns)):
                 column_reference[columns[j].strip()] = j
-            pass
         else:
             current_states.append(((lines[i].split(',')[column_reference['winner']]), lines[i].split(',')[column_reference['moves']].split(' ')))
 
@@ -38,12 +37,7 @@ while (True):
         print('==BLACK\'S TURN==')
 
     # Print the board
-    if (player == 1):
-        print(board)
-    else:
-        board.apply_transform(chess.flip_vertical)
-        print(board)
-        board.apply_transform(chess.flip_vertical)
+    print(board)
 
     # Get a legal move
     move = str()
@@ -68,22 +62,12 @@ while (True):
                 new_states.append((current_states[i][0], trimmed_state))
     current_states = new_states
 
-    # new_states = []
-    # for i in range(len(current_states)):
-    #     if current_states[i][0] == move:
-    #         trimmed_state = current_states[i][1:]
-    #         if len(trimmed_state) != 0:
-    #             new_states.append(trimmed_state)
-    # current_states = new_states
-
     # Show the top 5 moves to come next
     next_moves = []
     for i in range(len(current_states)):
-        # On white's turn we want to predict the turns black wants to make
         if (turn_counter % 2) == 0:
             if current_states[i][0] == 'black':
                 next_moves.append(current_states[i][1][0])
-        # Vice verse for black's turn
         else:
             if current_states[i][0] == 'white':
                 next_moves.append(current_states[i][1][0])
