@@ -7,8 +7,6 @@ import chess.svg
 import cairosvg
 from PIL import Image,ImageTk
 
-import threading
-
 # Constants
 DATAFILE = 'games.csv'
 
@@ -60,22 +58,6 @@ def get_top_five():
     counted = Counter(next_moves)
     top_five = counted.most_common(5)
     return top_five
-    '''
-    total_elements = len(current_states)
-    if player == 1:
-        if (turn_counter % 2) == 0:
-            print('Moves Black is likely to play')
-        else:
-            print('Moves you could play')
-    else:
-        if (turn_counter % 2) == 1:
-            print('Moves White is likely to play')
-        else:
-            print('Moves you could play')
-    for element, count in top_five:
-        percentage = (count / total_elements) * 100
-        print(f"{element}: {percentage:.2f}%")
-    '''
 
 # State pruning
 def prune(move):
@@ -103,24 +85,19 @@ def san_to_lan(move, board):
     elif move[0] == 'O':
         if move == 'O-O':
             if board.turn == chess.WHITE:
-                return 'e1g1'
-            else:
-                return 'e8g8'
-        else:
-            if board.turn == chess.WHITE:
-                return 'e1c1'
-            else:
-                return 'e8c8'
+                return chess.Move.from_uci('e1g1')
+            return chess.Move.from_uci('e8g8')
+        if board.turn == chess.WHITE:
+            return chess.Move.from_uci('e1c1')
+        return chess.Move.from_uci('e8c8')
 
     destination_square = move[-2:]
 
     possible_moves = []
     for move in board.generate_legal_moves():
         if move.to_square == chess.parse_square(destination_square):
-            if (board.piece_type_at(move.from_square) == piece_map[piece]):
-                #print(move, board.piece_type_at(move.from_square))
+            if board.piece_type_at(move.from_square) == piece_map[piece]:
                 possible_moves.append(move)
-    #print('LAN format possible moves', possible_moves)
     return possible_moves[0]
 
 def loop():
@@ -147,8 +124,9 @@ def loop():
 
         # Make the render
         arrows = []
-        for move in lan_five_moves:
-            arrows.append(chess.svg.Arrow(move.from_square, move.to_square))
+        colors = ['#cccccc', '#aaaaaa', '#888888', '#666666', '#444444']
+        for i in range(len(lan_five_moves)):
+            arrows.append(chess.svg.Arrow(lan_five_moves[i].from_square, lan_five_moves[i].to_square, color=colors[i]))
         render = chess.svg.board(board, arrows=arrows)
 
         # Display the new image
