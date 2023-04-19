@@ -20,4 +20,4 @@ Tkinter requires a display for the program to work correctly. If you do not have
 
 ## Using KingsGambit
 
-To try out the project navigate to the folder where you have cloned this repository and run the command `python3 beta.py`. This will create window AND a task in the terminal. If either are close the entire program will close so be careful. You interact with the program using keyboard inputs in the terminal, and data is visualized in the window according to your inputs.
+To try out the project navigate to the folder where you have cloned this repository and run the command `python3 beta.py`. This will create window AND a task in the terminal. If either are closed the entire program will close, so be careful. You interact with the program using keyboard inputs in the terminal, and data is visualized in the window according to your inputs.
