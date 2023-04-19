@@ -124,7 +124,7 @@ def loop():
 
         # Make the render
         arrows = []
-        colors = ['#cccccc', '#aaaaaa', '#888888', '#666666', '#444444']
+        colors = ['#639754', '#7bb662', '#ffd301', '#e03c32', '#d61f1f']
         for i in range(len(lan_five_moves)):
             arrows.append(chess.svg.Arrow(lan_five_moves[i].from_square, lan_five_moves[i].to_square, color=colors[i]))
         render = chess.svg.board(board, arrows=arrows)
