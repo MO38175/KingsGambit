@@ -137,6 +137,47 @@ def fix_draw_order():
     svg_file.write(new_contents)
     svg_file.close()
 
+def change_squares():
+    # Load in the svg file
+    svg_file = open("temp.svg", 'r')
+    contents = ''
+    char = svg_file.read(1)
+    while char:
+        contents += char
+        char = svg_file.read(1)
+    svg_file.close()
+
+    # Split the file up by <...> tokens
+    contents = contents.split('<')
+    for i in range(len(contents)):
+        if i != 0:
+            contents[i] = '<' + contents[i]
+
+    # Move where the pieces are drawn
+    pieces = []
+    for token in contents:
+        if 'use' in token:
+            pieces.append(token)
+    for piece in pieces:
+        contents.remove(piece)
+
+    # Reconstruct the svg
+    new_contents = ''
+    for i in range(len(contents) - 1):
+        new_contents += contents[i]
+    for piece in pieces:
+        new_contents += piece
+    new_contents += '</svg>'
+
+    # Refill the squares with better colors
+    new_contents = new_contents.replace('#d18b47', '#3a6289')
+    new_contents = new_contents.replace('#ffce9e', '#adc5ce')
+
+    # Write over the svg file with the new contents
+    svg_file = open('temp.svg', 'w')
+    svg_file.write(new_contents)
+    svg_file.close()
+
 def loop():
     global turn_counter
 
@@ -171,7 +212,7 @@ def loop():
             f.write(render)
         f.close()
 
-        fix_draw_order()
+        change_squares()
         image_data = cairosvg.svg2png(url="temp.svg")
         image = Image.open(io.BytesIO(image_data))
         tk_image = ImageTk.PhotoImage(image)
