@@ -43,6 +43,11 @@ def get_move(board):
             print('The move you entered is not a valid move in Short Algebraic Notaion (SAN)')
         except chess.IllegalMoveError:
             print('The move you entered it not legal in the current state of the game')
+        except chess.AmbiguousMoveError:
+            print('You are confusing me, there are two or more pieces that can move to that square.')
+            print('When two (or more) identical pieces can move to the same square, the moving piece is uniquely identified by specifying the piece\'s letter followed by (in order of preference)...')
+            print('1. The file (letter) the piece you want to move is leaving from')
+            print('2. The rank (number) the piece you want to move is leaving from')
     return move
 
 # Top 5 Moves
