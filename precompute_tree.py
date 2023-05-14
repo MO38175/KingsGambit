@@ -101,3 +101,5 @@ for node in enumerate(roots[0].children):
     if node[1].move not in moves_following_d4_in_tree:
         moves_following_d4_in_tree.append(node[1].move)
 print(moves_following_d4_in_tree)
+
+print(roots[1].children[0].children[0])

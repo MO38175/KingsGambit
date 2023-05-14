@@ -81,10 +81,15 @@ def san_to_lan(move, board):
     piece_map = {'P' : 1, 'N': 2, 'B' : 3, 'R' : 4, 'Q' : 5, 'K' : 6}
 
     piece = 'P'
+    check = False
 
     # Normal move
-    if (move[0].isupper()) and (move[0] != 'O'):
+    if (move[0].isupper()) and (move[0] != 'O') and (move[-1] != '+'):
         piece = move[0]
+
+    # Check move
+    elif move[-1] == '+':
+        check = True
 
     # Castle move
     elif move[0] == 'O':
@@ -96,7 +101,10 @@ def san_to_lan(move, board):
             return chess.Move.from_uci('e1c1')
         return chess.Move.from_uci('e8c8')
 
-    destination_square = move[-2:]
+    if (check):
+        destination_square = move[1:-1]
+    else:
+        destination_square = move[-2:]
 
     possible_moves = []
     for move in board.generate_legal_moves():
